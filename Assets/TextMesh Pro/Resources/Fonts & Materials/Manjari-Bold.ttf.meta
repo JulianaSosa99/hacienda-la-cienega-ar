@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 2c7b50590e7dd024fbbb54818ba356c8
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Manjari
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: b95e1d52327e3664998c21973741dae5, type: 3}
+  - {fileID: 12800000, guid: e7cfff1c9f3d61c4bb12a0671d1485d9, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

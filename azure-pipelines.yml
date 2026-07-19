@@ -1,0 +1,69 @@
+trigger:
+  branches:
+    include:
+      - testing
+
+pool:
+  name: Default
+
+jobs:
+- job: BuildAndroid
+  displayName: Build Unity Android APK
+  timeoutInMinutes: 180
+
+  steps:
+
+  # =========================
+  # Checkout repository
+  # =========================
+  - checkout: self
+    clean: false
+
+  # =========================
+  # Build Unity APK
+  # =========================
+  - task: CmdLine@2
+    displayName: Build Unity APK
+    timeoutInMinutes: 180
+    inputs:
+      script: |
+        "C:\Program Files\Unity\Hub\Editor\2022.3.62f3\Editor\Unity.exe" ^
+        -batchmode ^
+        -nographics ^
+        -quit ^
+        -projectPath "$(Build.SourcesDirectory)" ^
+        -executeMethod BuildScript.BuildAndroid ^
+        -logFile "$(Build.SourcesDirectory)\build.log"
+
+  # =========================
+  # Publish APK Artifact
+  # =========================
+  - task: PublishBuildArtifacts@1
+    displayName: Publish APK
+    inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)\Builds\Android'
+      ArtifactName: 'AndroidBuild'
+      publishLocation: 'Container'
+
+  # =========================
+  # Upload APK to Firebase App Distribution
+  # =========================
+  - task: CmdLine@2
+    displayName: Upload to Firebase App Distribution
+    timeoutInMinutes: 30
+    inputs:
+      script: |
+        firebase appdistribution:distribute "$(Build.SourcesDirectory)\Builds\Android\AppHacienda.apk" ^
+        --app "1:335915892331:android:7d387d7a606ea8254a3b2e" ^
+        --groups "tester-team"
+
+  # =========================
+  # Publish Unity Build Log
+  # =========================
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Build Log
+    condition: always()
+    inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)\build.log'
+      ArtifactName: 'UnityBuildLog'
+      publishLocation: 'Container'

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "335915892331",
+    "project_id": "app-hacienda-la-cienega",
+    "storage_bucket": "app-hacienda-la-cienega.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335915892331:android:7d387d7a606ea8254a3b2e",
+        "android_client_info": {
+          "package_name": "com.lavastudio.lacienegaar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "335915892331-8anvaon6vcejsptonrksb67b550i70ku.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lavastudio.lacienegaar",
+            "certificate_hash": "6123a2fd16d1aadf0deab8ded3a59e1f42303007"
+          }
+        },
+        {
+          "client_id": "335915892331-6ta7o5j6u9ie4uqaljmtl40v8kl98dcp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMoEqDmgEGAvR3GvIo20asyW9-VUbEwxE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "335915892331-6ta7o5j6u9ie4uqaljmtl40v8kl98dcp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

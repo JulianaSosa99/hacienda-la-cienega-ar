@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_android_client_id,@string/default_web_client_id">
+  <string name="gcm_defaultSenderId" translatable="false">335915892331</string>
+  <string name="google_storage_bucket" translatable="false">app-hacienda-la-cienega.firebasestorage.app</string>
+  <string name="project_id" translatable="false">app-hacienda-la-cienega</string>
+  <string name="google_api_key" translatable="false">AIzaSyAMoEqDmgEGAvR3GvIo20asyW9-VUbEwxE</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAMoEqDmgEGAvR3GvIo20asyW9-VUbEwxE</string>
+  <string name="google_app_id" translatable="false">1:335915892331:android:7d387d7a606ea8254a3b2e</string>
+  <string name="default_android_client_id" translatable="false">335915892331-8anvaon6vcejsptonrksb67b550i70ku.apps.googleusercontent.com</string>
+  <string name="default_web_client_id" translatable="false">335915892331-6ta7o5j6u9ie4uqaljmtl40v8kl98dcp.apps.googleusercontent.com</string>
+</resources>

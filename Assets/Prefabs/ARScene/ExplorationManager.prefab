@@ -1,0 +1,157 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4813989601170071433
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1649100799158443301}
+  - component: {fileID: 3715224821553903205}
+  m_Layer: 0
+  m_Name: ExplorationManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1649100799158443301
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4813989601170071433}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 421.68573, y: 1052.4457, z: 5.9934916}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3715224821553903205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4813989601170071433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfddcd9222135034eac7c26d00223018, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Progress:
+    unlockedMemories: []
+    completedMinigames: []
+    discoveredCollectibles: []
+    earnedRewards: []
+  memories:
+  - id: nino_pozo
+    guardianName: "El ni\xF1o del Pozo"
+    title: "El ni\xF1o del Pozo"
+    description: Memoria historica del guardian del pozo.
+    minigameId: nino_pozo_minigame
+    minigameName: Pozo
+    rewardId: nino_pozo_gem
+    rewardName: Gema del Pozo
+    scanHint: "Busca el objeto que desbloquea al ni\xF1o del Pozo."
+    portrait: {fileID: 21300000, guid: 2fefc9139e755be4bb5ec2da3ee84b39, type: 3}
+    lockedPortrait: {fileID: 21300000, guid: 186c3263c39115a47b8abdcda0841f40, type: 3}
+    scanSilhouette: {fileID: 21300000, guid: 3af47930d82ad6e43ac1b579822610e0, type: 3}
+    isUnlocked: 0
+    minigameCompleted: 0
+    rewardEarned: 0
+  - id: tio_adolfo
+    guardianName: "T\xEDo Adolfo"
+    title: "T\xEDo Adolfo"
+    description: emoria historica de Tio Adolfo.
+    minigameId: tio_adolfo_minigame
+    minigameName: Puzzle Adolfo
+    rewardId: tio_adolfo_gem
+    rewardName: Gema de Adolfo
+    scanHint: Busca el retrato del Tio Adolfo.
+    portrait: {fileID: 21300000, guid: 8f6f00547cf4c674a986600d15597aea, type: 3}
+    lockedPortrait: {fileID: 21300000, guid: f44d530bfb38c6c4ba34a57dae9b6ce4, type: 3}
+    scanSilhouette: {fileID: 21300000, guid: 0696edae294bbcc4fa7a0519eb9970a7, type: 3}
+    isUnlocked: 0
+    minigameCompleted: 0
+    rewardEarned: 0
+  - id: guagua_mayor
+    guardianName: La Guagua Mayor
+    title: La Guagua Mayor
+    description: Memoria historica de La Guagua Mayor.
+    minigameId: guagua_mayor_minigame
+    minigameName: Prensa de Queso
+    rewardId: guagua_mayor_gem
+    rewardName: Gema de la Guagua Mayor
+    scanHint: Busca la prensa de queso.
+    portrait: {fileID: 0}
+    lockedPortrait: {fileID: 0}
+    scanSilhouette: {fileID: 21300000, guid: ead0560b7e3d23c48918f22d81a26b2d, type: 3}
+    isUnlocked: 0
+    minigameCompleted: 0
+    rewardEarned: 0
+  - id: juan_manuel_lasso
+    guardianName: Juan Manuel Lasso
+    title: Juan Manuel Lasso
+    description: Memoria historica de Juan Manuel Lasso.
+    minigameId: juan_manuel_lasso_minigame
+    minigameName: Smoke Game
+    rewardId: juan_manuel_lasso_gem
+    rewardName: Gema de Juan Manuel Lasso
+    scanHint: 'Busca el punto historico de Juan Manuel Lasso. '
+    portrait: {fileID: 21300000, guid: 99661f28debc44c498bd20652cb34886, type: 3}
+    lockedPortrait: {fileID: 21300000, guid: fc601e9ce59643744a9123d5757a842d, type: 3}
+    scanSilhouette: {fileID: 21300000, guid: 7a31853d80de57b46947f4671d90ae48, type: 3}
+    isUnlocked: 0
+    minigameCompleted: 0
+    rewardEarned: 0
+  - id: los_novios
+    guardianName: Los Novios
+    title: Los Novios
+    description: Memoria historica de Los Novios.
+    minigameId: los_novios_minigame
+    minigameName: Flores
+    rewardId: los_novios_gem
+    rewardName: Gema de los Novios
+    scanHint: Busca la pileta para desbloquear a los novios.
+    portrait: {fileID: 21300000, guid: 970f17dd3527b76468efd85c0f18a32e, type: 3}
+    lockedPortrait: {fileID: 21300000, guid: af0d2f69ec752514ba0272e0fb722afc, type: 3}
+    scanSilhouette: {fileID: 21300000, guid: 0167ed4380e69f04e8a8fc244a1e2fe7, type: 3}
+    isUnlocked: 0
+    minigameCompleted: 0
+    rewardEarned: 0
+  - id: padre_mario_cicala
+    guardianName: Padre Mario Cicala
+    title: Padre Mario Cicala
+    description: Memoria historica del Padre Mario Cicala.
+    minigameId: padre_mario_cicala_minigame
+    minigameName: Aguila Bicefala
+    rewardId: padre_mario_cicala_gem
+    rewardName: Gema del Padre Mario Cicala
+    scanHint: Busca el simbolo del aguila bicefala.
+    portrait: {fileID: 21300000, guid: 8616021fc8f090043932f3e0bf76732b, type: 3}
+    lockedPortrait: {fileID: 21300000, guid: bd8d97c9a54712448816175047ed7e93, type: 3}
+    scanSilhouette: {fileID: 21300000, guid: 9fea4183923f52f419e6052797013cf1, type: 3}
+    isUnlocked: 0
+    minigameCompleted: 0
+    rewardEarned: 0
+  - id: gran_matriarca
+    guardianName: La Gran Matriarca
+    title: La Gran Matriarca
+    description: Memoria historica de La Gran Matriarca.
+    minigameId: gran_matriarca_minigame
+    minigameName: Caja Fuerte
+    rewardId: gran_matriarca_gem
+    rewardName: Gema de la Gran Matriarca
+    scanHint: Busca la caja guerte de la Matriarca.
+    portrait: {fileID: 21300000, guid: d9e90456098f10e4eade8408fb1c5072, type: 3}
+    lockedPortrait: {fileID: 21300000, guid: 5b67e7ae6caddc94289a1ecc6b17ec15, type: 3}
+    scanSilhouette: {fileID: 21300000, guid: b54f7b7b1a7a10a4d80a310be3701ab9, type: 3}
+    isUnlocked: 0
+    minigameCompleted: 0
+    rewardEarned: 0

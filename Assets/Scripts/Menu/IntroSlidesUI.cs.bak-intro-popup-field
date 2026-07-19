@@ -1,0 +1,119 @@
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+public class IntroSlidesUI : MonoBehaviour
+{
+    [Header("Panel")]
+    public GameObject introSlidesPanel;
+
+    [Header("Imagen de fondo")]
+    public Image slideImage;
+
+    [Header("Boton")]
+    public Button nextButton;
+    public Image nextButtonImage;
+
+    [Header("Slides")]
+    public Sprite[] slides;
+
+    [Header("Imagenes del boton")]
+    public Sprite startButtonSprite;
+    public Sprite nextButtonSprite;
+
+    [Header("Comportamiento")]
+    public bool showOnlyOnce = true;
+
+    [Header("Al terminar")]
+    public GameObject memoriesPanel;
+    public MemoryListUI memoriesUI;
+
+    private const string IntroSeenKey = "intro_slides_seen";
+    private int currentSlideIndex = 0;
+
+    private void Awake()
+    {
+        if (introSlidesPanel == null)
+            introSlidesPanel = gameObject;
+
+        if (nextButton != null)
+        {
+            nextButton.onClick.RemoveListener(ShowNextSlide);
+            nextButton.onClick.AddListener(ShowNextSlide);
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (showOnlyOnce && PlayerPrefs.GetInt(IntroSeenKey, 0) == 1)
+        {
+            FinishIntro(false);
+            return;
+        }
+
+        SetMemoriesVisible(false);
+
+        currentSlideIndex = 0;
+        ShowCurrentSlide();
+
+        if (ExplorationProgressBarUI.Instance != null)
+            ExplorationProgressBarUI.Instance.Hide();
+
+        CameraMemoryButtonUI.HideButton();
+    }
+
+    public void ShowNextSlide()
+    {
+        currentSlideIndex++;
+
+        if (slides == null || currentSlideIndex >= slides.Length)
+        {
+            FinishIntro(true);
+            return;
+        }
+
+        ShowCurrentSlide();
+    }
+
+    private void ShowCurrentSlide()
+    {
+        if (slideImage != null && slides != null && slides.Length > 0)
+            slideImage.sprite = slides[Mathf.Clamp(currentSlideIndex, 0, slides.Length - 1)];
+
+        if (nextButtonImage != null)
+            nextButtonImage.sprite = currentSlideIndex == 0 ? startButtonSprite : nextButtonSprite;
+    }
+
+    private void FinishIntro(bool markAsSeen)
+    {
+        if (markAsSeen)
+        {
+            PlayerPrefs.SetInt(IntroSeenKey, 1);
+            PlayerPrefs.Save();
+        }
+
+        if (introSlidesPanel != null)
+            introSlidesPanel.SetActive(false);
+
+        if (ExplorationProgressBarUI.Instance != null)
+            ExplorationProgressBarUI.Instance.Hide();
+
+        CameraMemoryButtonUI.HideButton();
+
+        SetMemoriesVisible(true);
+
+        if (memoriesUI != null)
+            memoriesUI.OpenMemories();
+    }
+    private void SetMemoriesVisible(bool visible)
+    {
+        if (memoriesPanel != null)
+        {
+            memoriesPanel.SetActive(visible);
+            return;
+        }
+
+        if (memoriesUI != null)
+            memoriesUI.gameObject.SetActive(visible);
+    }
+}
+

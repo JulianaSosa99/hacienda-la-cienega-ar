@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "com.ptc.vuforia.engine": "file:com.ptc.vuforia.engine-11.4.4.tgz",
+    "com.unity.feature.2d": "2.0.1",
+    "com.unity.textmeshpro": "3.0.6",
+    "com.unity.ugui": "1.0.0",
+    "com.unity.xr.management": "4.6.0",
+    "com.unity.modules.androidjni": "1.0.0",
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.video": "1.0.0"
+  }
+}

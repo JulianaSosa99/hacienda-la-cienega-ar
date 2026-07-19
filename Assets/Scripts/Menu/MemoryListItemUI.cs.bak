@@ -1,0 +1,151 @@
+﻿using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class MemoryListItemUI : MonoBehaviour, IPointerClickHandler
+{
+    [Header("Texto")]
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text statusText;
+
+    [Header("Imagen")]
+    [SerializeField] private Image portraitImage;
+
+    [Header("Estado visual")]
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private float lockedAlpha = 0.45f;
+
+    [Header("Accion")]
+    [SerializeField] private Button button;
+
+    [Header("Area de toque")]
+    [SerializeField] private Image touchAreaImage;
+
+    private MemoryData memory;
+    private Action<MemoryData> onSelected;
+
+    public void Setup(MemoryData memoryData, Action<MemoryData> selectedCallback)
+    {
+        memory = memoryData;
+        onSelected = selectedCallback;
+
+        ResolveReferences();
+
+        if (nameText != null)
+        {
+            nameText.text = string.IsNullOrEmpty(memory.title) ? memory.guardianName : memory.title;
+        }
+
+        if (statusText != null)
+        {
+            if (!memory.isUnlocked)
+                statusText.text = "Por descubrir";
+            else if (memory.minigameCompleted)
+                statusText.text = "Reto completado";
+            else
+                statusText.text = "Reto pendiente";
+        }
+
+        if (portraitImage != null)
+        {
+            Sprite sprite = memory.isUnlocked
+                ? memory.portrait
+                : memory.lockedPortrait;
+
+            if (sprite == null)
+                sprite = memory.portrait;
+
+            if (sprite == null)
+                sprite = memory.scanSilhouette;
+
+            portraitImage.sprite = sprite;
+            portraitImage.enabled = sprite != null;
+        }
+
+        if (canvasGroup != null)
+        {
+            bool memoryFullyCompleted = memory.isUnlocked && memory.minigameCompleted;
+            canvasGroup.alpha = memoryFullyCompleted ? 1f : lockedAlpha;
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+        }
+
+        if (button != null)
+        {
+            button.onClick.RemoveListener(Select);
+            button.onClick.AddListener(Select);
+            button.interactable = true;
+        }
+
+        ConfigureTouchArea();
+    }
+
+    private void Awake()
+    {
+        ResolveReferences();
+    }
+
+    private void ResolveReferences()
+    {
+        if (button == null)
+            button = GetComponent<Button>();
+
+        if (canvasGroup == null)
+            canvasGroup = GetComponent<CanvasGroup>();
+
+        if (portraitImage == null)
+            portraitImage = FindImageByName("PortraitImage");
+
+        if (touchAreaImage == null)
+            touchAreaImage = FindImageByName("TouchAreaImage");
+
+        if (touchAreaImage == null)
+            touchAreaImage = GetComponent<Image>();
+    }
+
+    private void ConfigureTouchArea()
+    {
+        Graphic[] graphics = GetComponentsInChildren<Graphic>(true);
+
+        for (int i = 0; i < graphics.Length; i++)
+        {
+            graphics[i].raycastTarget = false;
+        }
+
+        if (touchAreaImage != null)
+        {
+            touchAreaImage.raycastTarget = true;
+        }
+
+        if (button != null && touchAreaImage != null)
+        {
+            button.targetGraphic = touchAreaImage;
+        }
+    }
+
+    private Image FindImageByName(string targetName)
+    {
+        Image[] images = GetComponentsInChildren<Image>(true);
+
+        for (int i = 0; i < images.Length; i++)
+        {
+            if (images[i].name == targetName)
+                return images[i];
+        }
+
+        return null;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Select();
+    }
+
+    private void Select()
+    {
+        if (memory != null && onSelected != null)
+            onSelected.Invoke(memory);
+    }
+}
