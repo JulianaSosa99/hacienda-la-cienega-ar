@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -32,10 +32,14 @@ public class AdolfoNarrativeManager : MonoBehaviour, INarrativeManager, INarrati
     private bool alreadyStarted = false;
 
     private bool introPrepared = false;
+    private bool introPreparationStarted = false;
     private bool finalPrepared = false;
+    private bool finalPreparationStarted = false;
 
     private Renderer introRenderer;
     private Renderer finalRenderer;
+    private Material introMaterial;
+    private Material finalMaterial;
 
     void Start()
     {
@@ -43,6 +47,18 @@ public class AdolfoNarrativeManager : MonoBehaviour, INarrativeManager, INarrati
 
         introRenderer = introQuad.GetComponent<Renderer>();
         finalRenderer = finalQuad.GetComponent<Renderer>();
+
+        // Explicitly bind each player to its own surface and material instance.
+        introMaterial = new Material(introRenderer.sharedMaterial);
+        finalMaterial = new Material(finalRenderer.sharedMaterial);
+        introRenderer.sharedMaterial = introMaterial;
+        finalRenderer.sharedMaterial = finalMaterial;
+        introPlayer.renderMode = VideoRenderMode.MaterialOverride;
+        introPlayer.targetMaterialRenderer = introRenderer;
+        introPlayer.targetMaterialProperty = "_MainTex";
+        finalPlayer.renderMode = VideoRenderMode.MaterialOverride;
+        finalPlayer.targetMaterialRenderer = finalRenderer;
+        finalPlayer.targetMaterialProperty = "_MainTex";
 
         introRenderer.enabled = false;
         finalRenderer.enabled = false;
@@ -61,8 +77,15 @@ public class AdolfoNarrativeManager : MonoBehaviour, INarrativeManager, INarrati
         finalPlayer.skipOnDrop = false;
         finalPlayer.waitForFirstFrame = true;
 
+        PrepareIntro();
+        // Prepare the final only after the puzzle: mobile video decoders are limited.
+    }
+
+    private void PrepareIntro()
+    {
+        if (introPreparationStarted) return;
+        introPreparationStarted = true;
         StartCoroutine(VideoPlayerCacheUtility.PrepareFromFirebaseOrCurrentUrl(introPlayer, introFirebasePath));
-        StartCoroutine(VideoPlayerCacheUtility.PrepareFromFirebaseOrCurrentUrl(finalPlayer, finalFirebasePath));
     }
 
     void OnIntroPrepared(VideoPlayer vp)
@@ -127,6 +150,10 @@ public class AdolfoNarrativeManager : MonoBehaviour, INarrativeManager, INarrati
         }
 
         NarrativeFlowUI.StartNarrative();
+        PrepareIntro();
+
+        if (portraitTransition != null)
+            portraitTransition.PrepareTransition();
 
         StartCoroutine(StartNarrativeRoutine());
     }
@@ -156,8 +183,8 @@ public class AdolfoNarrativeManager : MonoBehaviour, INarrativeManager, INarrati
     {
         yield return null;
 
-        introPlayer.Stop();
         introRenderer.enabled = false;
+        introPlayer.Stop();
 
         portraitTransition.PlayTransition();
     }
@@ -191,18 +218,35 @@ public class AdolfoNarrativeManager : MonoBehaviour, INarrativeManager, INarrati
         finalPlayer.Play();
 
         yield return VideoPlayerCacheUtility.WaitForFirstVisibleFrame(finalPlayer);
+        float frameWait = 0f;
+        while ((finalPlayer.texture == null || finalPlayer.frame < 0) && frameWait < 8f)
+        {
+            frameWait += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        // The utility has a timeout: never reveal the material's white fallback texture.
+        if (finalPlayer.texture == null || finalPlayer.frame < 0)
+        {
+            Debug.LogError("Adolfo: el video final no produjo una imagen; se mantiene oculto.");
+            yield break;
+        }
         finalRenderer.enabled = true;
     }
 
     public void StartFinalNarrative()
     {
+        if (!finalPreparationStarted)
+        {
+            finalPreparationStarted = true;
+            StartCoroutine(VideoPlayerCacheUtility.PrepareFromFirebaseOrCurrentUrl(finalPlayer, finalFirebasePath));
+        }
         StartCoroutine(FadeOutPuzzleAndShowFinal());
     }
 
     void OnFinalFinished(VideoPlayer vp)
     {
-        finalPlayer.Stop();
         finalRenderer.enabled = false;
+        finalPlayer.Stop();
 
         if (ExplorationManager.Instance != null)
         {
@@ -218,7 +262,43 @@ public class AdolfoNarrativeManager : MonoBehaviour, INarrativeManager, INarrati
 
     public void ResetNarrativeState()
     {
+        StopAllCoroutines();
+        if (portraitTransition != null) portraitTransition.CancelTransition();
+        // Hide surfaces before Stop releases their decoded textures.
+        if (introRenderer != null) introRenderer.enabled = false;
+        if (finalRenderer != null) finalRenderer.enabled = false;
+        if (introPlayer != null) introPlayer.Stop();
+        if (finalPlayer != null) finalPlayer.Stop();
+        if (puzzleGame != null) puzzleGame.SetActive(false);
+        if (puzzleCanvasGroup != null)
+        {
+            puzzleCanvasGroup.alpha = 1f;
+            puzzleCanvasGroup.interactable = true;
+            puzzleCanvasGroup.blocksRaycasts = true;
+        }
+        introPrepared = false;
+        introPreparationStarted = false;
+        finalPrepared = false;
+        finalPreparationStarted = false;
         alreadyStarted = false;
+    }
+
+    private void OnDisable() { ResetNarrativeState(); }
+
+    private void OnDestroy()
+    {
+        if (introMaterial != null) Destroy(introMaterial);
+        if (finalMaterial != null) Destroy(finalMaterial);
+        if (introPlayer != null)
+        {
+            introPlayer.loopPointReached -= OnIntroFinished;
+            introPlayer.prepareCompleted -= OnIntroPrepared;
+        }
+        if (finalPlayer != null)
+        {
+            finalPlayer.loopPointReached -= OnFinalFinished;
+            finalPlayer.prepareCompleted -= OnFinalPrepared;
+        }
     }
     private void ReleaseTargetVisuals()
     {

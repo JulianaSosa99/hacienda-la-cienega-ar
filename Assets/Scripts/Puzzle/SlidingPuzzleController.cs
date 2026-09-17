@@ -39,78 +39,48 @@ public class SlidingPuzzleController : MonoBehaviour
         }
     }
 
-    //Cuando se hace click en un tile
-    public void TryMoveTile(Tile tile)
+    // Direction uses board coordinates: right is +x, down is +y.
+    public void TryMoveTile(Tile tile, Vector2Int direction)
     {
-        if (isGameCompleted) return;
+        if (isGameCompleted || tile == null || tile.transform.parent != board) return;
+        if (size <= 0 || Mathf.Abs(direction.x) + Mathf.Abs(direction.y) != 1) return;
 
         int tileIndex = tile.transform.GetSiblingIndex();
-        int emptyIndex = GetEmptyIndex();
-
-        if (IsAdjacent(tileIndex, emptyIndex))
+        int x = tileIndex % size + direction.x;
+        int y = tileIndex / size + direction.y;
+        int targetIndex = y * size + x;
+        if (x < 0 || x >= size || y < 0 || targetIndex >= board.childCount)
         {
-            Swap(tileIndex, emptyIndex);
-
-            PlayMoveSound();
-
-            if (IsSolved())
-            {
-                UnityEngine.Debug.Log("PUZZLE COMPLETADO!!");
-                OnPuzzleSolved();
-            }
+            PlayInvalidMoveSound();
+            return;
         }
-        else
-        {
-            UnityEngine.Debug.Log("Movimiento inválido");
-            if (invalidMoveSound != null)
-                audioSource.PlayOneShot(invalidMoveSound);
-        }
+
+        Swap(tileIndex, targetIndex);
+        PlayMoveSound();
+        if (IsSolved()) OnPuzzleSolved();
     }
 
-    //Verifica si dos índices son vecinos en la grilla
-    bool IsAdjacent(int a, int b)
+    public void PlayInvalidMoveSound()
     {
-        int ax = a % size;
-        int ay = a / size;
-
-        int bx = b % size;
-        int by = b / size;
-
-        int dx = Mathf.Abs(ax - bx);
-        int dy = Mathf.Abs(ay - by);
-
-        return (dx + dy == 1);
+        if (!isGameCompleted && audioSource != null && invalidMoveSound != null)
+            audioSource.PlayOneShot(invalidMoveSound);
     }
-
-    //Encuentra el tile vacío
-    int GetEmptyIndex()
-    {
-        for (int i = 0; i < board.childCount; i++)
-        {
-            Tile t = board.GetChild(i).GetComponent<Tile>();
-
-            if (t == null)
-            {
-                UnityEngine.Debug.Log("Tile sin script en índice: " + i);
-                continue;
-            }
-
-            if (t.number == 0)
-                return i;
-        }
-
-        UnityEngine.Debug.Log("No se encontró tile vacío");
-        return -1;
-    }
-
-    //Intercambia posiciones en la jerarquía
+    //Intercambia posiciones en la jerarquï¿½a
     
     void Swap(int a, int b)
     {
         if (a < 0 || b < 0 || a >= board.childCount || b >= board.childCount)
         {
-            UnityEngine.Debug.Log($"Swap inválido: {a}, {b}");
+            UnityEngine.Debug.Log($"Swap invï¿½lido: {a}, {b}");
             return;
+        }
+
+        // Move the lower index first to preserve all intermediate siblings.
+        if (a > b)
+        {
+            int previousA = a;
+            a = b;
+            b = previousA;
         }
 
         Transform tileA = board.GetChild(a);
@@ -123,31 +93,20 @@ public class SlidingPuzzleController : MonoBehaviour
     //Mezcla el puzzle
     void Shuffle(int moves)
     {
+        if (size <= 0 || board.childCount < 2) return;
+
         for (int i = 0; i < moves; i++)
         {
-            int empty = GetEmptyIndex();
-
-            if (empty == -1)
-            {
-                UnityEngine.Debug.Log("Shuffle detenido: no se encontró tile vacío");
-                return;
-            }
-
-            List<int> neighbors = GetNeighbors(empty);
-
-            if (neighbors.Count == 0)
-            {
-                UnityEngine.Debug.Log("No hay vecinos para mover");
-                return;
-            }
-
-            int randomIndex = neighbors[Random.Range(0, neighbors.Count)];
-
-            Swap(randomIndex, empty);
+            int origin = Random.Range(0, board.childCount);
+            List<int> neighbors = GetNeighbors(origin);
+            if (neighbors.Count == 0) continue;
+            Swap(origin, neighbors[Random.Range(0, neighbors.Count)]);
         }
-    }
 
-    //Obtiene índices vecinos válidos
+        // Never start with an already completed board.
+        if (IsSolved()) Swap(0, 1);
+    }
+    //Obtiene ï¿½ndices vecinos vï¿½lidos
     List<int> GetNeighbors(int index)
     {
         List<int> neighbors = new List<int>();
@@ -156,9 +115,9 @@ public class SlidingPuzzleController : MonoBehaviour
         int y = index / size;
 
         if (x > 0) neighbors.Add(index - 1);
-        if (x < size - 1) neighbors.Add(index + 1);
+        if (x < size - 1 && index + 1 < board.childCount) neighbors.Add(index + 1);
         if (y > 0) neighbors.Add(index - size);
-        if (y < size - 1) neighbors.Add(index + size);
+        if (index + size < board.childCount) neighbors.Add(index + size);
 
         return neighbors;
     }
@@ -169,7 +128,7 @@ public class SlidingPuzzleController : MonoBehaviour
         {
             Tile tile = board.GetChild(i).GetComponent<Tile>();
 
-            // el último debe ser el vacío (0)
+            // el ï¿½ltimo debe ser el vacï¿½o (0)
             if (i == board.childCount - 1)
             {
                 if (tile.number != 0)
@@ -190,7 +149,7 @@ public class SlidingPuzzleController : MonoBehaviour
     //    isGameCompleted = true;
     //    UnityEngine.Debug.Log("Juego terminado");
 
-    //    if (winSound != null)
+    //    if (audioSource != null && winSound != null)
     //        audioSource.PlayOneShot(winSound);
 
     //    FindObjectOfType<AdolfoNarrativeManager>().StartFinalNarrative();
@@ -207,7 +166,7 @@ public class SlidingPuzzleController : MonoBehaviour
 
     IEnumerator PuzzleSolvedSequence()
     {
-        if (winSound != null)
+        if (audioSource != null && winSound != null)
         {
             audioSource.PlayOneShot(winSound);
 
@@ -219,7 +178,7 @@ public class SlidingPuzzleController : MonoBehaviour
 
     void PlayMoveSound()
     {
-        if (moveSound != null)
+        if (audioSource != null && moveSound != null)
             audioSource.PlayOneShot(moveSound);
     }
 }

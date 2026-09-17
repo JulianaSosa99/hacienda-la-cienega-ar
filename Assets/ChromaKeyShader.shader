@@ -4,6 +4,8 @@ Shader "Custom/ChromaKeyShader"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _Threshold ("Threshold", Range(0,1)) = 0.4
+        [Toggle] _RemoveWhite ("Remove white background", Float) = 0
+        _WhiteTolerance ("White background tolerance", Range(0.01,0.3)) = 0.08
     }
 
     SubShader
@@ -26,6 +28,8 @@ Shader "Custom/ChromaKeyShader"
             sampler2D _MainTex;
             float4 _MainTex_ST;
             float _Threshold;
+            float _RemoveWhite;
+            float _WhiteTolerance;
 
             struct appdata
             {
@@ -58,6 +62,12 @@ Shader "Custom/ChromaKeyShader"
                 if (green > _Threshold && green > red * 1.2 && green > blue * 1.2)
                 {
                     col.a = 0;
+                }
+
+                if (_RemoveWhite > 0.5)
+                {
+                    float distanceFromWhite = max(1.0 - red, max(1.0 - green, 1.0 - blue));
+                    col.a *= smoothstep(_WhiteTolerance * 0.5, _WhiteTolerance, distanceFromWhite);
                 }
 
                 return col;
